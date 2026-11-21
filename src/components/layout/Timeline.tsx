@@ -74,7 +74,7 @@ export function Timeline() {
         >
           {INTEGRATOR_LIST.map((item) => (
             <option key={item.id} value={item.id}>
-              {item.name}
+              {item.label}
             </option>
           ))}
         </select>
