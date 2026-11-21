@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { EARTH_MASS, G, SOLAR_MASS, AU } from '../engine/numeric';
 import { SimulationClock } from '../engine/simulation/clock';
 import { SimulationEngine } from '../engine/simulation/engine';

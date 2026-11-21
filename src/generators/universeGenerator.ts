@@ -1,7 +1,7 @@
 import { createBody, createOrbitalBody, nextId } from '../data/bodyFactory';
 import { MATERIAL_LIST, type MaterialDefinition } from '../data/materials';
 import { AU, createRandom, G, hashString, SOLAR_MASS } from '../engine/numeric';
-import type { BodyType, CelestialBody, MaterialPreset, Universe } from '../types/celestial';
+import type { CelestialBody, MaterialPreset, Universe } from '../types/celestial';
 import { makeScenario } from '../scenarios/builders';
 import type { Scenario } from '../scenarios/types';
 

@@ -1,4 +1,3 @@
-import { computeEnergy } from '../engine/energy/energy';
 import { calculateOrbitalElements } from '../engine/orbits/orbital';
 import { bodyIndex } from '../engine/physics/world';
 import type { SimulationEngine } from '../engine/simulation/engine';

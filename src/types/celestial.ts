@@ -102,7 +102,7 @@ export interface UniverseSettings {
   softening: number;
   /** Base solver step in seconds. */
   timestep: number;
-  integrator: string;
+  integrator: IntegratorId;
   collisionMode: CollisionMode;
   collisionsEnabled: boolean;
   /** Simulation seconds represented by one real second at 1x speed. */

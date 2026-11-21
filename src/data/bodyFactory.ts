@@ -1,7 +1,8 @@
 import { G } from '../engine/numeric';
 import { stateFromElements } from '../engine/orbits/orbital';
-import { vec3, type Vec3 } from '../engine/vector';
+import { vec3 } from '../engine/vector';
 import type { BodyType, CelestialBody, MaterialPreset, VisualProperties } from '../types/celestial';
+import type { Vec3 } from '../types/vector';
 import { MATERIALS, suggestedMaterial, TYPE_COLORS } from './materials';
 
 let counter = 0;

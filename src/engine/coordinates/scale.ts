@@ -57,7 +57,6 @@ export function scenePosition(position: Readonly<Vec3>, scale: SceneScale): Vec3
   }
   if (scale.mode === 'educational') {
     const extent = Math.max(Math.hypot(position.x, position.y, position.z), 1);
-    const factor = 100 / Math.max(scale.distance, 1);
     const normalised = Math.log10(1 + extent / Math.max(scale.distance, 1)) / Math.log10(1 + 100);
     const amount = normalised * 100;
     return {

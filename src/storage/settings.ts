@@ -1,14 +1,14 @@
 import type { AppSettings } from '../types/settings';
 import { DEFAULT_SETTINGS } from '../state/defaults';
 import { safeGet, safeSet } from './localStorage';
-import { normaliseSettings, unwrap, wrap } from './schema';
+import { normaliseSettings, unwrap, validateSettingsShape, wrap } from './schema';
 
 const SETTINGS_KEY = 'settings';
 
 export function loadSettings(): AppSettings {
   const raw = safeGet(SETTINGS_KEY);
   if (!raw) return structuredClone(DEFAULT_SETTINGS);
-  const settings = unwrap<AppSettings>(raw, 'settings', () => true);
+  const settings = unwrap<AppSettings>(raw, 'settings', validateSettingsShape);
   return normaliseSettings(settings);
 }
 

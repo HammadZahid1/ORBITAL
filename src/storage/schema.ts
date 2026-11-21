@@ -1,4 +1,4 @@
-import type { Universe, CelestialBody } from '../types/celestial';
+import type { Universe, CelestialBody, IntegratorId } from '../types/celestial';
 import type { AppSettings } from '../types/settings';
 import { DEFAULT_SETTINGS } from '../state/defaults';
 
@@ -22,6 +22,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isFiniteNumber(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value);
+}
+
+function isIntegratorId(value: unknown): value is IntegratorId {
+  return value === 'euler' || value === 'semi-implicit-euler' || value === 'velocity-verlet' || value === 'rk4';
 }
 
 function isVec3(value: unknown): boolean {
@@ -56,7 +60,7 @@ export function validateUniverseShape(value: unknown): value is Universe {
     isFiniteNumber(settings.G) &&
     isFiniteNumber(settings.softening) &&
     isFiniteNumber(settings.timestep) &&
-    typeof settings.integrator === 'string'
+    isIntegratorId(settings.integrator)
   );
 }
 

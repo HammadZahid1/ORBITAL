@@ -116,9 +116,9 @@ export function calculateOrbitalElements(
         : 0,
     trueAnomaly:
       eccentricity > 1e-12
-        ? angleWithSign(dot3(eVec, r) / (eccentricity * radius), dot3(r, v) < 0)
+        ? angleWithSign(dot3(eVec, r) / (eccentricity * radius), dot3(r, v) < 0 ? -1 : 1)
         : nodeMagnitude > 1e-12
-          ? angleWithSign(dot3(node, r) / (nodeMagnitude * radius), r.y < 0)
+          ? angleWithSign(dot3(node, r) / (nodeMagnitude * radius), r.y < 0 ? -1 : 1)
           : 0,
     isBound,
     isCircular: eccentricity < 0.02,

@@ -3,7 +3,7 @@ import type { ModuleId } from '../types/celestial';
 import type { AppSettings } from '../types/settings';
 import type { LayerConfiguration, LayerId, RenderQuality } from '../types/visualization';
 import type { ScaleMode } from '../engine/coordinates/scale';
-import { DEFAULT_LAYERS, DEFAULT_SETTINGS } from './defaults';
+import { DEFAULT_LAYERS } from './defaults';
 import { loadSettings, saveSettings } from '../storage/settings';
 
 export interface Notification {
