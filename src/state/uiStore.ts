@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { ModuleId } from '../types/celestial';
 import type { AppSettings } from '../types/settings';
 import type { LayerConfiguration, LayerId, RenderQuality } from '../types/visualization';
+import type { ScaleMode } from '../engine/coordinates/scale';
 import { DEFAULT_LAYERS, DEFAULT_SETTINGS } from './defaults';
 import { loadSettings, saveSettings } from '../storage/settings';
 
@@ -29,6 +30,8 @@ interface UIState {
   comparisonIds: string[];
   focusMode: boolean;
   reducedMotionOverride: boolean;
+  scaleMode: ScaleMode;
+  setScaleMode: (mode: ScaleMode) => void;
   setModule: (module: ModuleId) => void;
   toggleLeft: () => void;
   toggleRight: () => void;
@@ -71,6 +74,9 @@ export const useUIStore = create<UIState>()((set, get) => ({
   comparisonIds: [],
   focusMode: false,
   reducedMotionOverride: false,
+  scaleMode: 'exploration',
+
+  setScaleMode: (mode) => set({ scaleMode: mode }),
 
   setModule: (module) => set({ activeModule: module }),
   toggleLeft: () => set({ leftCollapsed: !get().leftCollapsed }),
