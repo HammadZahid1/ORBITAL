@@ -1,22 +1,35 @@
-import { MODULE_BY_ID } from '../../state/moduleRegistry';
+import type { ComponentType } from 'react';
 import { useUIStore } from '../../state/uiStore';
-import { Panel, PanelHeader, PanelSection } from '../ui';
+import type { ModuleId } from '../../types/celestial';
+import { AnalyticsPanel } from './AnalyticsPanel';
+import { AsteroidPanel } from './AsteroidPanel';
+import { BuilderPanel } from './BuilderPanel';
+import { ExplorerPanel } from './ExplorerPanel';
+import { ExtremePanel } from './ExtremePanel';
+import { GravityPanel } from './GravityPanel';
+import { MissionPanel } from './MissionPanel';
+import { OrbitalPanel } from './OrbitalPanel';
+import { SavedPanel } from './SavedPanel';
+import { SolarSystemPanel } from './SolarSystemPanel';
+import { StellarPanel } from './StellarPanel';
+
+const PANELS: Record<ModuleId, ComponentType> = {
+  explorer: ExplorerPanel,
+  'solar-system': SolarSystemPanel,
+  orbital: OrbitalPanel,
+  gravity: GravityPanel,
+  builder: BuilderPanel,
+  asteroids: AsteroidPanel,
+  stellar: StellarPanel,
+  extreme: ExtremePanel,
+  mission: MissionPanel,
+  analytics: AnalyticsPanel,
+  saved: SavedPanel,
+};
 
 /** Hosts the contextual tool panel for the active workspace. */
-export function ModulePanelHost({ compact = false }: { compact?: boolean }) {
+export function ModulePanelHost({ compact: _compact = false }: { compact?: boolean }) {
   const activeModule = useUIStore((state) => state.activeModule);
-  const module = MODULE_BY_ID.get(activeModule);
-
-  return (
-    <Panel>
-      <PanelHeader title={module?.label ?? activeModule} subtitle={compact ? 'Quick tools' : 'Workspace tools'} />
-      <PanelSection title="Overview" dense>
-        <p className="text-[10px] leading-relaxed text-muted">{module?.description}</p>
-        <p className="mt-2 text-[9px] leading-relaxed text-faint">
-          This workspace shares the same live solver as the viewport. Changes to time, integrator and bodies apply
-          immediately across the application.
-        </p>
-      </PanelSection>
-    </Panel>
-  );
+  const PanelComponent = PANELS[activeModule];
+  return <PanelComponent />;
 }
