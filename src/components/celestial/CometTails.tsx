@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import type { SceneScale } from '../../engine/coordinates/scale';
 import { scenePosition, sceneVector } from '../../engine/coordinates/scale';
@@ -23,7 +23,7 @@ export function CometTails({ scale }: CometTailsProps) {
     const primaryIndex = bodies.findIndex((body) => body.type === 'star');
     const primaryPhysical = primaryIndex >= 0 ? readVec3(world.pos, primaryIndex) : { x: 0, y: 0, z: 0 };
     const primaryPosition = scenePosition(primaryPhysical, scale);
-    const result: Array<{ id: string; geometry: THREE.BufferGeometry; color: string }> = [];
+    const result: Array<{ id: string; object: THREE.Line; geometry: THREE.BufferGeometry; material: THREE.LineBasicMaterial }> = [];
 
     for (const body of bodies) {
       if (body.type !== 'comet' || !body.visible) continue;
@@ -47,19 +47,32 @@ export function CometTails({ scale }: CometTailsProps) {
         head.clone().addScaledVector(away, tailLength).add(new THREE.Vector3(0, tailLength * 0.08, 0)),
       ];
       const geometry = new THREE.BufferGeometry().setFromPoints(points);
-      result.push({ id: body.id, geometry, color: body.visual.color });
+      const material = new THREE.LineBasicMaterial({
+        color: body.visual.color,
+        transparent: true,
+        opacity: 0.55 * opacity,
+        depthWrite: false,
+      });
+      result.push({ id: body.id, object: new THREE.Line(geometry, material), geometry, material });
     }
     return result;
-  }, [bodies, frame, scale, visible]);
+  }, [bodies, frame, opacity, scale, visible]);
+
+  useEffect(
+    () => () =>
+      tails.forEach((tail) => {
+        tail.geometry.dispose();
+        tail.material.dispose();
+      }),
+    [tails],
+  );
 
   if (!visible) return null;
 
   return (
     <group name="comet-tails">
       {tails.map((tail) => (
-        <line key={tail.id} geometry={tail.geometry}>
-          <lineBasicMaterial color={tail.color} transparent opacity={0.55 * opacity} depthWrite={false} />
-        </line>
+        <primitive key={tail.id} object={tail.object} />
       ))}
     </group>
   );

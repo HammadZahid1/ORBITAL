@@ -24,7 +24,7 @@ export function OrbitPaths({ scale }: OrbitPathsProps) {
 
   const paths = useMemo(() => {
     if (!layers.orbits.visible || bodies.length < 2) return [];
-    const result: Array<{ id: string; geometry: THREE.BufferGeometry; highlighted: boolean }> = [];
+    const result: Array<{ id: string; object: THREE.Line; geometry: THREE.BufferGeometry; material: THREE.LineBasicMaterial }> = [];
     const world = engine.world;
 
     for (const body of bodies) {
@@ -56,24 +56,31 @@ export function OrbitPaths({ scale }: OrbitPathsProps) {
       });
       const geometry = new THREE.BufferGeometry();
       geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-      result.push({ id: body.id, geometry, highlighted: body.id === selectedId });
+      const highlighted = body.id === selectedId;
+      const material = new THREE.LineBasicMaterial({
+        color: highlighted ? '#55e0e8' : '#6b8eb5',
+        transparent: true,
+        opacity: (highlighted ? 0.85 : 0.4) * layers.orbits.opacity,
+        depthWrite: false,
+      });
+      result.push({ id: body.id, object: new THREE.Line(geometry, material), geometry, material });
     }
     return result;
-  }, [bodies, frame, layers.orbits.visible, scale, selectedId]);
+  }, [bodies, frame, layers.orbits.opacity, layers.orbits.visible, scale, selectedId]);
 
-  useEffect(() => () => paths.forEach((path) => path.geometry.dispose()), [paths]);
+  useEffect(
+    () => () =>
+      paths.forEach((path) => {
+        path.geometry.dispose();
+        path.material.dispose();
+      }),
+    [paths],
+  );
 
   return (
     <group name="orbits">
       {paths.map((path) => (
-        <line key={path.id} geometry={path.geometry}>
-          <lineBasicMaterial
-            color={path.highlighted ? '#55e0e8' : '#6b8eb5'}
-            transparent
-            opacity={(path.highlighted ? 0.85 : 0.4) * layers.orbits.opacity}
-            depthWrite={false}
-          />
-        </line>
+        <primitive key={path.id} object={path.object} />
       ))}
     </group>
   );

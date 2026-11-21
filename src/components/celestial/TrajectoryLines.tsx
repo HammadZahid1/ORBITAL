@@ -19,7 +19,7 @@ export function TrajectoryLines({ scale }: TrajectoryLinesProps) {
 
   const lines = useMemo(() => {
     if (!layers.trails.visible) return [];
-    const result: Array<{ id: string; geometry: THREE.BufferGeometry; selected: boolean; color: string }> = [];
+    const result: Array<{ id: string; object: THREE.Line; geometry: THREE.BufferGeometry; material: THREE.LineBasicMaterial }> = [];
     const limit = useUIStore.getState().settings.performance.trailLength;
 
     for (const body of bodies) {
@@ -40,31 +40,33 @@ export function TrajectoryLines({ scale }: TrajectoryLinesProps) {
       }
       const geometry = new THREE.BufferGeometry();
       geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-      result.push({
-        id: body.id,
-        geometry,
-        selected: body.id === selectedId,
+      const selected = body.id === selectedId;
+      const material = new THREE.LineBasicMaterial({
         color: body.visual.trail.color ?? body.visual.color,
+        transparent: true,
+        opacity: (selected ? 0.9 : 0.45) * layers.trails.opacity,
+        depthWrite: false,
       });
+      result.push({ id: body.id, object: new THREE.Line(geometry, material), geometry, material });
     }
     return result;
-  }, [bodies, frame, layers.trails.visible, scale, selectedId]);
+  }, [bodies, frame, layers.trails.opacity, layers.trails.visible, scale, selectedId]);
 
-  useEffect(() => () => lines.forEach((line) => line.geometry.dispose()), [lines]);
+  useEffect(
+    () => () =>
+      lines.forEach((line) => {
+        line.geometry.dispose();
+        line.material.dispose();
+      }),
+    [lines],
+  );
 
   if (engine.world.count === 0) return null;
 
   return (
     <group name="trails">
       {lines.map((line) => (
-        <line key={line.id} geometry={line.geometry}>
-          <lineBasicMaterial
-            color={line.color}
-            transparent
-            opacity={(line.selected ? 0.9 : 0.45) * layers.trails.opacity}
-            depthWrite={false}
-          />
-        </line>
+        <primitive key={line.id} object={line.object} />
       ))}
     </group>
   );
