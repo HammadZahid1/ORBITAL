@@ -7,6 +7,7 @@ import type {
   Universe,
 } from '../types/celestial';
 import type { Vec3 } from '../types/vector';
+import { energyBaseline } from '../engine/energy/stability';
 import { isIntegratorId } from '../engine/integrators';
 import { SimulationEngine } from '../engine/simulation/engine';
 import { TrajectoryRecorder } from '../engine/trajectory/history';
@@ -42,6 +43,7 @@ interface SimulationState {
   collisionMode: CollisionMode;
   collisionsEnabled: boolean;
   simTime: number;
+  initialEnergy: number;
   frame: number;
   steps: number;
   cameraRequest: CameraRequest | null;
@@ -106,6 +108,7 @@ export const useSimulationStore = create<SimulationState>()((set, get) => ({
   collisionMode: initialUniverse.settings.collisionMode,
   collisionsEnabled: initialUniverse.settings.collisionsEnabled,
   simTime: 0,
+  initialEnergy: energyBaseline(engine.world),
   frame: 0,
   steps: 0,
   cameraRequest: null,
@@ -163,6 +166,7 @@ export const useSimulationStore = create<SimulationState>()((set, get) => ({
       selectedId: cloned.bodies[0]?.id ?? null,
       hoveredId: null,
       simTime: 0,
+      initialEnergy: energyBaseline(engine.world),
       steps: 0,
       frame: get().frame + 1,
       scenarioId,
@@ -190,7 +194,7 @@ export const useSimulationStore = create<SimulationState>()((set, get) => ({
     engine.reset(get().bodies);
     recorder.reset();
     recorder.record(engine.world, true);
-    set({ simTime: 0, steps: 0, frame: get().frame + 1 });
+    set({ simTime: 0, initialEnergy: energyBaseline(engine.world), steps: 0, frame: get().frame + 1 });
   },
   stepOnce: () => {
     engine.step();
@@ -223,6 +227,7 @@ export const useSimulationStore = create<SimulationState>()((set, get) => ({
     set({ bodies, universe: { ...get().universe, bodies, updatedAt: Date.now() } });
     engine.setBodies(bodies, get().playing);
     recorder.sync(engine.world);
+    set({ initialEnergy: energyBaseline(engine.world) });
   },
   addBodyOfType: (type) => {
     const body = createBody({ name: `New ${type}`, type });
@@ -241,6 +246,7 @@ export const useSimulationStore = create<SimulationState>()((set, get) => ({
     );
     set({ bodies, universe: { ...get().universe, bodies, updatedAt: Date.now() } });
     engine.setBodies(bodies, get().playing);
+    set({ initialEnergy: energyBaseline(engine.world) });
   },
   updateVisual: (id, patch) => {
     const bodies = get().bodies.map((body) =>
@@ -257,6 +263,7 @@ export const useSimulationStore = create<SimulationState>()((set, get) => ({
     });
     engine.setBodies(bodies, false);
     recorder.unregister(id);
+    set({ initialEnergy: energyBaseline(engine.world) });
   },
   duplicate: (id) => {
     const source = get().bodies.find((body) => body.id === id);
