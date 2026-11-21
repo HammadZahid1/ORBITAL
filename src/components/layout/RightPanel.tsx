@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import { Layers3, PanelRightClose, SlidersHorizontal } from 'lucide-react';
+import { Layers3, PanelRightClose, SlidersHorizontal, Wrench } from 'lucide-react';
 import { moduleLabel } from '../../state/moduleRegistry';
 import { useUIStore } from '../../state/uiStore';
 import { IconButton } from '../ui';
 import { LayerControls } from '../panels/LayerControls';
 import { BodyInspector } from '../panels/BodyInspector';
 import { ModulePanelHost } from '../panels/ModulePanelHost';
+import { ToolsPanel } from '../panels/ToolsPanel';
 
-type Tab = 'inspector' | 'layers' | 'module';
+type Tab = 'inspector' | 'layers' | 'module' | 'tools';
 
 /** Contextual right-hand inspector stack. */
 export function RightPanel() {
@@ -31,6 +32,7 @@ export function RightPanel() {
             ['inspector', 'Inspect', <SlidersHorizontal key="i" size={13} />],
             ['layers', 'Layers', <Layers3 key="l" size={13} />],
             ['module', moduleLabel(activeModule), <PanelRightClose key="m" size={13} />],
+            ['tools', 'Tools', <Wrench key="t" size={13} />],
           ] as const
         ).map(([id, label, icon]) => (
           <button
@@ -56,6 +58,7 @@ export function RightPanel() {
       )}
       {tab === 'layers' && <LayerControls />}
       {tab === 'module' && <ModulePanelHost />}
+      {tab === 'tools' && <ToolsPanel />}
     </aside>
   );
 }
