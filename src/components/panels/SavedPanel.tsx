@@ -1,12 +1,14 @@
 import { useRef, useState } from 'react';
 import { Database, Download, FileUp, Save, Sparkles, Trash2 } from 'lucide-react';
 import { DEFAULT_GENERATOR_CONFIG, generateScenario, type SystemVariation } from '../../generators/universeGenerator';
+import { EXTRA_SCENARIOS } from '../../scenarios/extra';
 import { SCENARIOS } from '../../scenarios/registry';
 import { useSimulationStore } from '../../state/simulationStore';
 import { useUIStore } from '../../state/uiStore';
 import { deleteUniverse, listUniverses, saveUniverse } from '../../storage/universes';
 import { downloadJson, exportUniverseJson, importUniverseJson, safeFilename } from '../../storage/importExport';
 import { Badge, Button, EmptyState, IconButton, NumberField, Panel, PanelHeader, PanelSection, Select, TextField } from '../ui';
+import { SegmentedControl } from '../ui/extra';
 
 /** Saved Universes: scenarios, local saves, import/export and procedural generation. */
 export function SavedPanel() {
@@ -20,7 +22,9 @@ export function SavedPanel() {
   const [name, setName] = useState(DEFAULT_GENERATOR_CONFIG.systemName);
   const [variation, setVariation] = useState<SystemVariation>('balanced');
   const [planets, setPlanets] = useState(DEFAULT_GENERATOR_CONFIG.planetCount);
+  const [scenarioSet, setScenarioSet] = useState<'builtin' | 'extended'>('builtin');
 
+  const scenarios = scenarioSet === 'builtin' ? SCENARIOS : EXTRA_SCENARIOS;
   const refresh = () => setSaves(listUniverses());
 
   const handleImport = async (file: File | undefined) => {
@@ -40,11 +44,21 @@ export function SavedPanel() {
         title="Saved Universes"
         subtitle="Scenarios, local storage and JSON"
         icon={<Database size={14} />}
-        actions={<Badge tone="accent">{SCENARIOS.length} built-ins</Badge>}
+        actions={<Badge tone="accent">{SCENARIOS.length + EXTRA_SCENARIOS.length} scenarios</Badge>}
       />
-      <PanelSection title="Built-in scenarios" dense>
+      <PanelSection title="Scenarios" dense>
+        <SegmentedControl
+          label="Scenario library"
+          value={scenarioSet}
+          options={[
+            { value: 'builtin', label: `Built-in (${SCENARIOS.length})` },
+            { value: 'extended', label: `Extended (${EXTRA_SCENARIOS.length})` },
+          ]}
+          onChange={setScenarioSet}
+          className="mb-2 w-full"
+        />
         <div className="orb-scroll max-h-40 space-y-1 overflow-y-auto">
-          {SCENARIOS.map((scenario) => (
+          {scenarios.map((scenario) => (
             <button
               key={scenario.id}
               type="button"
