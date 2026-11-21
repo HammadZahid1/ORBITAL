@@ -56,6 +56,8 @@ export function CometTails({ scale }: CometTailsProps) {
       result.push({ id: body.id, object: new THREE.Line(geometry, material), geometry, material });
     }
     return result;
+    // frame intentionally invalidates this cache when the mutable engine state advances.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bodies, frame, opacity, scale, visible]);
 
   useEffect(

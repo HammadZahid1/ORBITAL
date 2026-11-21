@@ -27,6 +27,8 @@ export function BodyInspector() {
       acceleration: readVec3(world.acc, index),
       elements: parentIndex >= 0 ? calculateOrbitalElements(world, index, parentIndex) : null,
     };
+    // frame intentionally invalidates this cache when the mutable engine state advances.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [body, frame]);
 
   if (!body || !diagnostics) {

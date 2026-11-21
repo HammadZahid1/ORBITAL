@@ -19,6 +19,8 @@ export function BarycenterMarker({ scale }: BarycenterMarkerProps) {
 
   const position = useMemo(() => {
     return scenePosition(centerOfMass(engine.world), scale);
+    // frame intentionally invalidates this cache when the mutable engine state advances.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frame, scale]);
 
   if (!visible) return null;

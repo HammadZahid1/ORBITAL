@@ -77,6 +77,8 @@ export function VectorGlyphs({ scale }: VectorGlyphsProps) {
       }
     }
     return result;
+    // frame intentionally invalidates this cache when the mutable engine state advances.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frame, layers, scale, selectedId]);
 
   return (

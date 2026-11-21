@@ -37,6 +37,8 @@ export function OrbitalPanel() {
     });
     const transfer = hohmannTransfer(elements.mu, elements.radius, targetAu * AU);
     return { elements, pathLength: path.length, transfer };
+    // frame intentionally invalidates this cache when the mutable engine state advances.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [body, frame, horizonDays, integrator, targetAu]);
 
   return (

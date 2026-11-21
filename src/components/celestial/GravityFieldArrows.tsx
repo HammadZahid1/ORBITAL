@@ -40,6 +40,8 @@ export function GravityFieldArrows({ scale }: GravityFieldArrowsProps) {
       }
     }
     return result;
+    // frame intentionally invalidates this cache when the mutable engine state advances.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frame, intensity, scale, visible]);
 
   if (!visible) return null;

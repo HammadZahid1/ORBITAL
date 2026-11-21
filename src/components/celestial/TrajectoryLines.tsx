@@ -50,6 +50,8 @@ export function TrajectoryLines({ scale }: TrajectoryLinesProps) {
       result.push({ id: body.id, object: new THREE.Line(geometry, material), geometry, material });
     }
     return result;
+    // frame intentionally invalidates this cache when the mutable engine state advances.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bodies, frame, layers.trails.opacity, layers.trails.visible, scale, selectedId]);
 
   useEffect(
